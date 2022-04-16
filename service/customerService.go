@@ -3,17 +3,17 @@ package service
 import "github.com/fprogress17/banking/domain"
 
 type CustomerService interface {
-  GetAllCustomer() ([]domain.Customer, error)
+	GetAllCustomer() ([]domain.Customer, error)
 }
 
 type DefaultCustomerService struct {
-  repo domain.CustomerRepository
+	repo domain.CustomerRepository
 }
 
-func (s DefaultCustomerService) GellAllCustomer() ([]domain.Customer, error) {
-  return s.repo.FindAll()
+func (s DefaultCustomerService) GetAllCustomer() ([]domain.Customer, error) {
+	return s.repo.FindAll()
 }
 
 func NewCustomerService(repository domain.CustomerRepository) DefaultCustomerService {
-  return DefaultCustomerService(repository)
+	return DefaultCustomerService{repository}
 }
