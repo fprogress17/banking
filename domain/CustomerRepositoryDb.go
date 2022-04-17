@@ -3,6 +3,7 @@ package domain
 import (
 	"database/sql"
 	"github.com/fprogress17/banking/errs"
+	"github.com/fprogress17/banking/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"time"
@@ -28,7 +29,7 @@ func (d CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 			var c Customer
 			err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DateofBirth, &c.Status)
 			if err != nil {
-				log.Println("error while scanning" + err.Error())
+				logger.Error("error while scanning" + err.Error())
 				return nil, errs.NewUnexpectedError("unexpected db error")
 			}
 			customers = append(customers, c)
@@ -39,7 +40,7 @@ func (d CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 		findAllSql := "select customer_id, name, city, zipcode, date_of_birth, status from customers where status = ?"
 		rows, err := d.client.Query(findAllSql, status)
 		if err != nil {
-			log.Println(" error while querying" + err.Error())
+			logger.Error(" error while querying" + err.Error())
 			return nil, errs.NewUnexpectedError("unexpected db error")
 		}
 
@@ -48,7 +49,8 @@ func (d CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 			var c Customer
 			err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DateofBirth, &c.Status)
 			if err != nil {
-				log.Println("error while scanning" + err.Error())
+				//log.Println("error while scanning" + err.Error())
+				logger.Error("error while scanning" + err.Error())
 				return nil, errs.NewUnexpectedError("unexpected db error")
 			}
 			customers = append(customers, c)
