@@ -11,12 +11,6 @@ import (
 	"net/http"
 )
 
-type Customer struct {
-	Name    string `json:"full_name"`
-	City    string `json:"city"`
-	Zipcode string `json:"zip_code"`
-}
-
 type CustomerHandlers struct {
 	service service.CustomerService
 }
@@ -41,23 +35,27 @@ func (ch *CustomerHandlers) getCustomer(w http.ResponseWriter, r *http.Request) 
 	customer, err := ch.service.GetCustomer(id)
 
 	if err != nil {
-		w.WriteHeader(err.Code)
-		fmt.Fprint(w, err.Message)
+		writeResponse(w, err.Code, err.AsMessage())
+		// w.Header().Add("Content-Type", "application/json")
+		// w.WriteHeader(err.Code)
+		// //fmt.Fprint(w, err.Message)
+		// json.NewEncoder(w).Encode(err.AsMessage())
 	} else {
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(customer)
+		writeResponse(w, http.StatusOK, customer)
+		// w.Header().Add("Content-Type", "application/json")
+		// w.WriteHeader(http.StatusOK)
+		// json.NewEncoder(w).Encode(customer)
+	}
+}
+
+func writeResponse(w http.ResponseWriter, code int, data interface{}) {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(code)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		panic(err)
 	}
 }
 
 func greet(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World")
-}
-
-func GetAllCustomer(w http.ResponseWriter, r *http.Request) {
-	customers := []Customer{
-		{Name: "AAA", City: "nw", Zipcode: "123"},
-		{Name: "BBB", City: "ww", Zipcode: "123"},
-	}
-	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(customers)
 }
